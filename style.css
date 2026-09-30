@@ -143,10 +143,10 @@ th, td {
 
 }
 
-thead {
-    text-align: left;
+h2 {
+    position: relative;
+    right: 500px;
 }
-
 
 #logo {
     position: relative;

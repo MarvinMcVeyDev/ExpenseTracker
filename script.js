@@ -20,7 +20,7 @@ function loadExpenses() {
 
     expenses.forEach(expense => {
         addToTable();
-        const formattedDate = formatDate(expense.date);
+        
     });
     updateTotalExpenses();
 }
@@ -67,32 +67,38 @@ function addExpense(event) {
 
 // Function to grab, modify and save back localStorage expenses
 function updateLocalStorage() {
-    const expenses = [];
-    const expenseItems = tableBody.getElementsByTagName('td');
+    
+    localStorage.removeItem('expenses');
+    let expense = [];
+    const rows = tableBody.getElementsByTagName("tr");
 
-    for (let i = 0; i < expenseItems.length; i++) {
-        const expenseText = expenseItems[i].textContent;
-        const [name, amount, date] = expenseText.split(') $');
-        expenses.push({ name, date, amount: parseFloat(amount) });
-    }
-
-
-    localStorage.setItem('expenses', JSON.stringify(expenses));
+    Array.from(rows).forEach(row => {
+        const cells = row.querySelectorAll("td")
+        const rowItem = {
+            expenseName: cells[1].textContent.trim(),
+            amount: parseFloat(cells [2].textContent.trim()) || 0,
+            date: cells [3].textContent.trim()
+        };
+        expense.push(rowItem);
+    });
+    localStorage.setItem('expenses', JSON.stringify(expense));
 }
 
 // Function to update the total expenses displayed
 function updateTotalExpenses() {
+    const rows = document.querySelectorAll("table tbody tr");
     let total = 0;
-    const row = checkboxElement.closest('tr');
-    const expenses = row.querySelector('.amount');
+    
 
-    console.log(expenses.textContent);
 
-    for (let i = 0; i < expenses.length; i++) {
-        const expenseText = expenses[i].textContent;
-        const amount = parseFloat(expenseText.split('$')[1]);
-        total += amount;
-    }
+    Array.from(rows).forEach(row => {
+        const td = row.querySelector("td:nth-child(3)");
+
+        if(td) {
+            const value = parseFloat(td.textContent.trim()) || 0;
+            total += value;
+        }
+    })
 
     totalExpensesSpan.textContent = total.toFixed(2);
     totalExpensesSpan.style.color = total > 1000 ? 'red' : 'white'; // Change color if total exceeds $1000
@@ -104,9 +110,10 @@ function deleteExpense(event) {
         for ( i = 0; i < checkbox.length; i++) {
             const expenseItem = checkbox[i].parentElement.parentElement;
             tableBody.removeChild(expenseItem);
-            updateLocalStorage(); // Update local storage after deletion
-        updateTotalExpenses();
+             // Update local storage after deletion
     }
+    updateLocalStorage();
+    updateTotalExpenses();
 }
 
 
