@@ -36,6 +36,7 @@ function formatDate(expenseDate) {
     });
 }
 
+
 // Function to add an expense to the list
 function addExpense(event) {
     event.preventDefault(); // Prevent the form from submitting
@@ -55,8 +56,6 @@ function addExpense(event) {
     storeExpenses(expenseName, expenseAmount, expenseDate); // Store the expense in local storage.
 
     addToTable();
-
-    
     updateTotalExpenses();
 
     // Clear the form inputs
@@ -75,9 +74,9 @@ function updateLocalStorage() {
     Array.from(rows).forEach(row => {
         const cells = row.querySelectorAll("td")
         const rowItem = {
-            expenseName: cells[1].textContent.trim(),
+            name: cells[1].textContent.trim(),
             amount: parseFloat(cells [2].textContent.trim()) || 0,
-            date: cells [3].textContent.trim()
+            date: row.dataset.date.trim()
         };
         expense.push(rowItem);
     });
@@ -101,7 +100,7 @@ function updateTotalExpenses() {
     })
 
     totalExpensesSpan.textContent = total.toFixed(2);
-    totalExpensesSpan.style.color = total > 1000 ? 'red' : 'white'; // Change color if total exceeds $1000
+    totalExpensesSpan.style.color = total > 60000 ? 'red' : '#39FF14'; // Change color if total exceeds $60,000
 }
 // Function to delete selected expenses from the list
 function deleteExpense(event) {
@@ -130,7 +129,7 @@ function addToTable() {
         const formattedDate = formatDate(expenseItem.date);
 
         const rowHTML = `
-        <tr>
+        <tr data-date="${expenseItem.date}">
         <td><input type="checkbox" class="row-checkbox" data-name="${expenseItem.name}"></td>
         <td>${expenseItem.name}</td>
         <td id="amount">${expenseItem.amount}</td>
@@ -159,3 +158,4 @@ document.getElementById('clear-expenses').addEventListener('click', () => {
 
 /**                                     Main code                       */
 loadExpenses(); // Load stored expenses when the page loads
+
